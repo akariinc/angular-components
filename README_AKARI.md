@@ -1,4 +1,4 @@
-# Clone
+## Clone
 
 Follow basically ./DEV_ENVIRONMENT.md
 
@@ -22,3 +22,10 @@ test push
 git push
 ```
 
+
+
+## Forked Repository
+
+Add secrets
+- ANGULAR_ROBOT_SLACK_TOKEN (Go to Slack API Console → https://api.slack.com/apps Create a Slack App → Generate Token and Scopes)
+- SNAPSHOT_BUILDS_GITHUB_TOKEN (GitHub → Developer Settings → Personal Access Tokens → Generate new token (classic))
