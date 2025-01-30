@@ -117,7 +117,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
   linker_aot_tests:
-    runs-on: ubuntu-latest-4core
+    runs-on: ubuntu-latest
     steps:
       - name: Initialize environment
         uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
@@ -138,7 +138,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
   linker_jit_tests:
-    runs-on: ubuntu-latest-4core
+    runs-on: ubuntu-latest
     steps:
       - name: Initialize environment
         uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
@@ -159,7 +159,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
   test:
-    runs-on: ubuntu-latest-16core
+    runs-on: ubuntu-latest
     steps:
       - name: Initialize environment
         uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
@@ -180,7 +180,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
   build:
-    runs-on: ubuntu-latest-16core
+    runs-on: ubuntu-latest
     steps:
       - name: Initialize environment
         uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
@@ -201,7 +201,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
   publish_snapshots:
-    runs-on: ubuntu-latest-4core
+    runs-on: ubuntu-latest
     steps:
       - name: Initialize environment
         uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
@@ -231,35 +231,35 @@ jobs:
           JOB_NAME: 'Snapshot publishing'
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
-  deploy_doc_site:
-    runs-on: ubuntu-latest-4core
-    steps:
-      - name: Initialize environment
-        uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-        with:
-          cache-node-modules: true
-      - name: Setup Bazel
-        uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      # - name: Setup Bazel RBE
-      #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      - name: Install node modules
-        run: yarn install --frozen-lockfile
-      - name: Build and Verify Release Output
-        run: yarn build-and-check-release-output
-      - name: Verify tooling setup
-        run: yarn check-tooling-setup
-      - name: Deploy the docs app
-        run: yarn ci-push-deploy-docs-app
-        env:
-          CIRCLE_BRANCH: ${{ github.ref_name }}
-          CIRCLE_SHA1: ${{ github.sha }}
-          DOCS_SITE_GCP_SERVICE_KEY: ${{ secrets.DOCS_SITE_GCP_SERVICE_KEY }}
-          DOCS_DEPLOY_GITHUB_TOKEN: ${{ secrets.DOCS_DEPLOY_GITHUB_TOKEN }}
-      - uses: ./.github/actions/slack
-        if: failure()
-        with:
-          JOB_NAME: 'Docs site deployment'
-          SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
+  # deploy_doc_site:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Initialize environment
+  #       uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #       with:
+  #         cache-node-modules: true
+  #     - name: Setup Bazel
+  #       uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     # - name: Setup Bazel RBE
+  #     #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     - name: Install node modules
+  #       run: yarn install --frozen-lockfile
+  #     - name: Build and Verify Release Output
+  #       run: yarn build-and-check-release-output
+  #     - name: Verify tooling setup
+  #       run: yarn check-tooling-setup
+  #     - name: Deploy the docs app
+  #       run: yarn ci-push-deploy-docs-app
+  #       env:
+  #         CIRCLE_BRANCH: ${{ github.ref_name }}
+  #         CIRCLE_SHA1: ${{ github.sha }}
+  #         DOCS_SITE_GCP_SERVICE_KEY: ${{ secrets.DOCS_SITE_GCP_SERVICE_KEY }}
+  #         DOCS_DEPLOY_GITHUB_TOKEN: ${{ secrets.DOCS_DEPLOY_GITHUB_TOKEN }}
+  #     - uses: ./.github/actions/slack
+  #       if: failure()
+  #       with:
+  #         JOB_NAME: 'Docs site deployment'
+  #         SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
   # saucelabs:
   #   runs-on: ubuntu-latest

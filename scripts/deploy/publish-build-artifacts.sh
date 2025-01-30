@@ -51,7 +51,7 @@ publishPackage() {
   buildTagName="${branchName}-${commitSha}"
   buildCommitMessage="${branchName} - ${commitMessage}"
 
-  repoUrl="https://github.com/angular/${packageRepo}.git"
+  repoUrl="https://github.com/akari/${packageRepo}.git"
   repoDir="tmp/${packageRepo}"
 
   echo "Starting publish process of ${packageName} for ${buildVersionName} into ${branchName}.."
