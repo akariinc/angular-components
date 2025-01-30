@@ -52,7 +52,7 @@ publishPackage() {
   buildTagName="${branchName}-${commitSha}"
   buildCommitMessage="${branchName} - ${commitMessage}"
 
-  repoUrl="https://github.com/akari/${packageRepo}.git"
+  repoUrl="https://github.com/akariinc/${packageRepo}.git"
   repoDir="tmp/${packageRepo}"
 
   echo "Starting publish process of ${packageName} for ${buildVersionName} into ${branchName}.."
@@ -98,6 +98,8 @@ publishPackage() {
   git config user.name "${commitAuthorName}"
   git config user.email "${commitAuthorEmail}"
   git config credential.helper "store --file=.git/credentials"
+
+  echo "committing as ${commitAuthorName} <${commitAuthorEmail}>"
 
   echo "https://${SNAPSHOT_BUILDS_GITHUB_TOKEN}:@github.com" > .git/credentials
 
