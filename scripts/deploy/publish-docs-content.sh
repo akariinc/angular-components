@@ -28,7 +28,7 @@ docsContentPath="${projectPath}/tmp/material2-docs-content"
 examplesPackagePath="${projectPath}/dist/docs-content-pkg/"
 
 # Git clone URL for the material2-docs-content repository.
-docsContentRepoUrl="https://github.com/angular/material2-docs-content"
+docsContentRepoUrl="https://github.com/akariinc/material2-docs-content"
 
 # Current version of Angular Material from the package.json file
 buildVersion=$(node -pe "require('./package.json').version")
