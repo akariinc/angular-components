@@ -116,68 +116,71 @@ jobs:
           JOB_NAME: 'Integration test'
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
-  linker_aot_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Initialize environment
-        uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-        with:
-          cache-node-modules: true
-      - name: Setup Bazel
-        uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      # - name: Setup Bazel RBE
-      #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      - name: Install node modules
-        run: yarn install --frozen-lockfile
-      - name: Run linker AOT tests
-        run: yarn test-linker-aot
-      - uses: ./.github/actions/slack
-        if: failure()
-        with:
-          JOB_NAME: 'Link AOT test'
-          SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
+  # Turns down due to the error that ChormeHeadless can't be run on the GitHub Actions (maybe the instance type needs to have -4core)
+  # linker_aot_tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Initialize environment
+  #       uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #       with:
+  #         cache-node-modules: true
+  #     - name: Setup Bazel
+  #       uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     # - name: Setup Bazel RBE
+  #     #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     - name: Install node modules
+  #       run: yarn install --frozen-lockfile
+  #     - name: Run linker AOT tests
+  #       run: yarn test-linker-aot
+  #     - uses: ./.github/actions/slack
+  #       if: failure()
+  #       with:
+  #         JOB_NAME: 'Link AOT test'
+  #         SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
-  linker_jit_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Initialize environment
-        uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-        with:
-          cache-node-modules: true
-      - name: Setup Bazel
-        uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      # - name: Setup Bazel RBE
-      #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      - name: Install node modules
-        run: yarn install --frozen-lockfile
-      - name: Run linker JIT tests
-        run: yarn test-linker-jit
-      - uses: ./.github/actions/slack
-        if: failure()
-        with:
-          JOB_NAME: 'Link JIT test'
-          SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
+  # Turns down due to the error that ChormeHeadless can't be run on the GitHub Actions (maybe the instance type needs to have -4core)
+  # linker_jit_tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Initialize environment
+  #       uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #       with:
+  #         cache-node-modules: true
+  #     - name: Setup Bazel
+  #       uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     # - name: Setup Bazel RBE
+  #     #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     - name: Install node modules
+  #       run: yarn install --frozen-lockfile
+  #     - name: Run linker JIT tests
+  #       run: yarn test-linker-jit
+  #     - uses: ./.github/actions/slack
+  #       if: failure()
+  #       with:
+  #         JOB_NAME: 'Link JIT test'
+  #         SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Initialize environment
-        uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-        with:
-          cache-node-modules: true
-      - name: Setup Bazel
-        uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      # - name: Setup Bazel RBE
-      #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      - name: Install node modules
-        run: yarn install --frozen-lockfile
-      - name: Run tests
-        run: bazel test --build_tag_filters=-e2e --test_tag_filters=-e2e --build_tests_only -- src/...
-      - uses: ./.github/actions/slack
-        if: failure()
-        with:
-          JOB_NAME: 'Test'
-          SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
+  # Turns down due to the error that ChormeHeadless can't be run on the GitHub Actions (maybe the instance type needs to have -4core)
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Initialize environment
+  #       uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #       with:
+  #         cache-node-modules: true
+  #     - name: Setup Bazel
+  #       uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     # - name: Setup Bazel RBE
+  #     #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     - name: Install node modules
+  #       run: yarn install --frozen-lockfile
+  #     - name: Run tests
+  #       run: bazel test --build_tag_filters=-e2e --test_tag_filters=-e2e --build_tests_only -- src/...
+  #     - uses: ./.github/actions/slack
+  #       if: failure()
+  #       with:
+  #         JOB_NAME: 'Test'
+  #         SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
   build:
     runs-on: ubuntu-latest
@@ -200,37 +203,39 @@ jobs:
           JOB_NAME: 'Build'
           SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
-  publish_snapshots:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Initialize environment
-        uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-        with:
-          cache-node-modules: true
-      - name: Setup Bazel
-        uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      # - name: Setup Bazel RBE
-      #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
-      - name: Install node modules
-        run: yarn install --frozen-lockfile
-      - name: Build and Verify Release Output
-        run: yarn build-and-check-release-output
-      - name: Verify tooling setup
-        run: yarn check-tooling-setup
-      - name: Build Docs Content
-        run: yarn build-docs-content
-      - name: Build Docs Content
-        run: yarn build-docs-content
-      - name: Publish Snapshots
-        run: ./scripts/circleci/publish-snapshots.sh
-        env:
-          SNAPSHOT_BUILDS_GITHUB_TOKEN: ${{ secrets.SNAPSHOT_BUILDS_GITHUB_TOKEN }}
-      - uses: ./.github/actions/slack
-        if: failure()
-        with:
-          JOB_NAME: 'Snapshot publishing'
-          SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
+  # Turns down due to the lack of repository to publish snapshots
+  # publish_snapshots:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Initialize environment
+  #       uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #       with:
+  #         cache-node-modules: true
+  #     - name: Setup Bazel
+  #       uses: angular/dev-infra/github-actions/bazel/setup@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     # - name: Setup Bazel RBE
+  #     #   uses: angular/dev-infra/github-actions/bazel/configure-remote@89624a6442b75b5cda33c5e9b5c8c4f87ca4f13d
+  #     - name: Install node modules
+  #       run: yarn install --frozen-lockfile
+  #     - name: Build and Verify Release Output
+  #       run: yarn build-and-check-release-output
+  #     - name: Verify tooling setup
+  #       run: yarn check-tooling-setup
+  #     - name: Build Docs Content
+  #       run: yarn build-docs-content
+  #     - name: Build Docs Content
+  #       run: yarn build-docs-content
+  #     - name: Publish Snapshots
+  #       run: ./scripts/circleci/publish-snapshots.sh
+  #       env:
+  #         SNAPSHOT_BUILDS_GITHUB_TOKEN: ${{ secrets.SNAPSHOT_BUILDS_GITHUB_TOKEN }}
+  #     - uses: ./.github/actions/slack
+  #       if: failure()
+  #       with:
+  #         JOB_NAME: 'Snapshot publishing'
+  #         SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
+  # Tuns down due to the lack of repository to deploy docs
   # deploy_doc_site:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -261,6 +266,7 @@ jobs:
   #         JOB_NAME: 'Docs site deployment'
   #         SLACK_BOT_TOKEN: ${{ secrets.ANGULAR_ROBOT_SLACK_TOKEN }}
 
+  # Turns down due to the lack of SauceLabs account
   # saucelabs:
   #   runs-on: ubuntu-latest
   #   env:
@@ -282,6 +288,7 @@ jobs:
   #     - name: Run tests on Saucelabs
   #       run: ./scripts/circleci/run-saucelabs-tests.sh
 
+  # Turns down due to the lack of Browserstack account
   # browserstack:
   #   runs-on: ubuntu-latest
   #   env:
