@@ -4,5 +4,5 @@
   [ngClass]="tooltipClass"
   (animationend)="_handleAnimationEnd($event)"
   [class.mdc-tooltip--multiline]="_isMultiline">
-  <div class="mat-mdc-tooltip-surface mdc-tooltip__surface">{{message}}</div>
+  <div class="mat-mdc-tooltip-surface mdc-tooltip__surface" [innerHTML]="message"></div>
 </div>

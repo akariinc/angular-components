@@ -310,7 +310,6 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
   /** The message to be displayed in the tooltip */
   @Input('matTooltip')
   get message(): string {
-    console.log('Test Output');
     return this._message;
   }
 
