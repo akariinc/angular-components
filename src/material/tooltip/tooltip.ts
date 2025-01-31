@@ -28,7 +28,6 @@ import {
   OnDestroy,
   Optional,
   ViewChild,
-  ContentChild,
   Renderer2,
   ViewContainerRef,
   ViewEncapsulation,
