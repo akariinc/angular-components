@@ -7,6 +7,7 @@
    Afterwards create an environment variable `BAZEL_SH` and its value to be `C:\msys64\usr\bin\bash.exe`.
    Alternatively, you can also use [Chocolately](https://bazel.build/install/windows#chocolately) which will install latest available version of Bazel and its dependencies.
    - On Ubuntu: Make sure `gcc` is installed, you can check if `gcc` is installed on your machine by running `which gcc`, if the command returns a path then the compiler is installed, otherwise can be installed with `sudo apt-get install build-essential`.
+   - On Mac: `brew install bazel`
 3. Fork the `angular/components` repo on GitHub.
 4. Clone your fork to your machine with `git clone`.
    Recommendation: name your git remotes `upstream` for `angular/components`

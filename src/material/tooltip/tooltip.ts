@@ -23,16 +23,19 @@ import {
   Inject,
   InjectionToken,
   Input,
+  OnInit,
   NgZone,
   OnDestroy,
   Optional,
   ViewChild,
+  Renderer2,
   ViewContainerRef,
   ViewEncapsulation,
   inject,
   ANIMATION_MODULE_TYPE,
   afterNextRender,
   Injector,
+  SecurityContext,
 } from '@angular/core';
 import {DOCUMENT, NgClass} from '@angular/common';
 import {normalizePassiveListenerOptions, Platform} from '@angular/cdk/platform';
@@ -53,6 +56,7 @@ import {
 } from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Observable, Subject} from 'rxjs';
+import {DomSanitizer} from '@angular/platform-browser';
 
 /** Possible positions for a tooltip. */
 export type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
@@ -319,7 +323,11 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
     // If the message is not a string (e.g. number), convert it to a string and trim it.
     // Must convert with `String(value)`, not `${value}`, otherwise Closure Compiler optimises
     // away the string-conversion: https://github.com/angular/components/issues/20684
-    this._message = value != null ? String(value).trim() : '';
+    // Use SecurityContext.HTML to Allow SVG
+    this._message =
+      this._sanitizer.sanitize(SecurityContext.HTML, value != null ? String(value).trim() : '') ||
+      '';
+    // this._message = value != null ? String(value).trim() : '';
 
     if (!this._message && this._isTooltipVisible()) {
       this.hide(0);
@@ -376,6 +384,7 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
     @Inject(MAT_TOOLTIP_DEFAULT_OPTIONS)
     private _defaultOptions: MatTooltipDefaultOptions,
     @Inject(DOCUMENT) _document: any,
+    private _sanitizer: DomSanitizer,
   ) {
     this._scrollStrategy = scrollStrategy;
     this._document = _document;
@@ -954,7 +963,7 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
   standalone: true,
   imports: [NgClass],
 })
-export class TooltipComponent implements OnDestroy {
+export class TooltipComponent implements OnInit, OnDestroy {
   /* Whether the tooltip text overflows to multiple lines */
   _isMultiline = false;
 
@@ -987,6 +996,9 @@ export class TooltipComponent implements OnDestroy {
   })
   _tooltip: ElementRef<HTMLElement>;
 
+  /** Reference to the host element of the tooltip content container. */
+  @ViewChild('container', {static: true}) _container: ElementRef<HTMLElement>;
+
   /** Whether interactions on the page should close the tooltip */
   private _closeOnInteraction = false;
 
@@ -1005,6 +1017,7 @@ export class TooltipComponent implements OnDestroy {
   constructor(
     private _changeDetectorRef: ChangeDetectorRef,
     protected _elementRef: ElementRef<HTMLElement>,
+    private _renderer: Renderer2,
     @Optional() @Inject(ANIMATION_MODULE_TYPE) animationMode?: string,
   ) {
     this._animationsDisabled = animationMode === 'NoopAnimations';
@@ -1050,6 +1063,10 @@ export class TooltipComponent implements OnDestroy {
   /** Whether the tooltip is being displayed. */
   isVisible(): boolean {
     return this._isVisible;
+  }
+
+  ngOnInit() {
+    this._renderer.setProperty(this._container.nativeElement, 'innerHTML', this.message);
   }
 
   ngOnDestroy() {
