@@ -15,7 +15,7 @@ import {
 import {A11yModule} from '@angular/cdk/a11y';
 import {CdkScrollableModule} from '@angular/cdk/scrolling';
 import {CommonModule} from '@angular/common';
-import {CustomSanitizer} from '../custom-sanitizer';
+import {CustomSanitizer} from '@angular/material/custom-sanitizer';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatCommonModule} from '@angular/material/core';
 import {NgModule} from '@angular/core';
