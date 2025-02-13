@@ -35,9 +35,9 @@ sass_library(
 
 sass_binary(
     name = "custom_sanitizer_scss",
-    src = "dummy.scss",
+    src = "custom_sanitizer.scss",
     deps = [
-        ":dummy_scss_lib",
+        ":custom_sanitizer_scss_lib",
         "//src/material/core:core_scss_lib",
     ],
 )
