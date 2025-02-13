@@ -23,6 +23,14 @@ git push
 ```
 
 
+If you are using asdf. husky might terminate your commit by error "yarn: command not found".
+for this, add ~/.config/husky/init.sh and add following line
+```
+export PATH=/Users/your-username/.asdf/shims:$PATH
+```
+
+
+
 
 ## Forked Repository
 

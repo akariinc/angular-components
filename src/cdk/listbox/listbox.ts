@@ -34,10 +34,12 @@ import {
   inject,
   Input,
   NgZone,
+  OnInit,
   OnDestroy,
   Output,
   QueryList,
   signal,
+  Renderer2,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {defer, fromEvent, merge, Observable, Subject} from 'rxjs';
@@ -96,7 +98,9 @@ class ListboxSelectionModel<T> extends SelectionModel<T> {
     '(focus)': '_handleFocus()',
   },
 })
-export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightable, OnDestroy {
+export class CdkOption<T = unknown>
+  implements OnInit, ListKeyManagerOption, Highlightable, OnDestroy
+{
   /** The id of the option's host element. */
   @Input()
   get id() {
@@ -145,11 +149,18 @@ export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightab
   /** The parent listbox this option belongs to. */
   protected readonly listbox: CdkListbox<T> = inject(CdkListbox);
 
+  /** The renderer used to modify the listbox element. */
+  protected readonly renderer: Renderer2 = inject(Renderer2);
+
   /** Emits when the option is destroyed. */
   protected destroyed = new Subject<void>();
 
   /** Emits when the option is clicked. */
   readonly _clicked = new Subject<MouseEvent>();
+
+  ngOnInit() {
+    this.renderer.setProperty(this.element, 'innerHTML', this.value);
+  }
 
   ngOnDestroy() {
     this.destroyed.next();
