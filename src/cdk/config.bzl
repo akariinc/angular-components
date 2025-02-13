@@ -7,6 +7,7 @@ CDK_ENTRYPOINTS = [
     "coercion",
     "coercion/private",
     "collections",
+    "custom-sanitizer",
     "dialog",
     "drag-drop",
     "keycodes",

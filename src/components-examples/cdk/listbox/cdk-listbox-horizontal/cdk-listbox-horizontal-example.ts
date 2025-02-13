@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
 import {CdkListbox, CdkOption} from '@angular/cdk/listbox';
+
+import {Component} from '@angular/core';
 
 /** @title Horizontal listbox */
 @Component({
@@ -11,5 +12,12 @@ import {CdkListbox, CdkOption} from '@angular/cdk/listbox';
   imports: [CdkListbox, CdkOption],
 })
 export class CdkListboxHorizontalExample {
-  sizes = ['XS', 'S', 'M', 'L', 'XL'];
+  sizes = [
+    'XS',
+    'S',
+    'M',
+    'L',
+    'XL',
+    "<i class='abc'>Custom HTML</i> <script>alert('hello')</script>Button <svg height='20' width='20' xmlns='http://www.w3.org/2000/svg'><circle r='10' cx='10' cy='10' fill='red' />Sorry, your browser does not support inline SVG.</svg>",
+  ];
 }

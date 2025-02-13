@@ -18,7 +18,7 @@ fi
 # Release packages that need to published as snapshots.
 # Build only the material package for now.
 PACKAGES=(
-  # cdk
+  cdk
   # cdk-experimental
   material
   # material-experimental

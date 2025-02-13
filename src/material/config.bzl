@@ -17,6 +17,8 @@ entryPoints = [
     "chips/testing",
     "core",
     "core/testing",
+    "custom-sanitizer",
+    "custom-sanitizer/testing",
     "datepicker",
     "datepicker/testing",
     "dialog",
