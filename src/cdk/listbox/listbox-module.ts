@@ -8,7 +8,7 @@
 
 import {CdkListbox, CdkOption} from './listbox';
 
-import {CdkCustomSanitizer} from '../custom-sanitizer';
+import {CdkCustomSanitizer} from '@angular/cdk/custom-sanitizer';
 import {DomSanitizer} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
