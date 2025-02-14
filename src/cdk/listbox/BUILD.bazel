@@ -12,7 +12,6 @@ ng_module(
         "//src/cdk/a11y",
         "//src/cdk/bidi",
         "//src/cdk/collections",
-        "//src/cdk/custom-sanitizer",
         "//src/cdk/keycodes",
         "@npm//@angular/forms",
     ],

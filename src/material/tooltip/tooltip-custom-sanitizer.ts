@@ -12,8 +12,8 @@ import {Injectable, SecurityContext} from '@angular/core';
  * Custom sanitizer that allows &lt;svg&gt; but removes dangerous content
  * @docs-private
  */
-@Injectable({providedIn: 'root'})
-export class CdkCustomSanitizer extends DomSanitizer {
+@Injectable()
+export class TooltipCustomSanitizer extends DomSanitizer {
   constructor() {
     super();
   }

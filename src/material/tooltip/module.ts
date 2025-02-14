@@ -15,18 +15,18 @@ import {
 import {A11yModule} from '@angular/cdk/a11y';
 import {CdkScrollableModule} from '@angular/cdk/scrolling';
 import {CommonModule} from '@angular/common';
-import {CustomSanitizer} from '@angular/material/custom-sanitizer';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatCommonModule} from '@angular/material/core';
 import {NgModule} from '@angular/core';
 import {OverlayModule} from '@angular/cdk/overlay';
+import {TooltipCustomSanitizer} from './tooltip-custom-sanitizer';
 
 @NgModule({
   imports: [A11yModule, CommonModule, OverlayModule, MatCommonModule, MatTooltip, TooltipComponent],
   exports: [MatTooltip, TooltipComponent, MatCommonModule, CdkScrollableModule],
   providers: [
     MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER,
-    {provide: DomSanitizer, useClass: CustomSanitizer},
+    {provide: DomSanitizer, useClass: TooltipCustomSanitizer},
   ],
 })
 export class MatTooltipModule {}
