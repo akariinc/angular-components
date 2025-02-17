@@ -27,6 +27,8 @@ import {
   NgZone,
   OnDestroy,
   Optional,
+  OnChanges,
+  SimpleChanges,
   ViewChild,
   Renderer2,
   ViewContainerRef,
@@ -193,7 +195,7 @@ const MAX_WIDTH = 200;
   },
   standalone: true,
 })
-export class MatTooltip implements OnDestroy, AfterViewInit {
+export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
   _overlayRef: OverlayRef | null;
   _tooltipInstance: TooltipComponent | null;
 
@@ -435,6 +437,12 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
           this._ngZone.run(() => this.show());
         }
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('message' in changes) {
+      this.message = changes['message'].currentValue;
+    }
   }
 
   /**
