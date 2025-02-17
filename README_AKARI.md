@@ -37,6 +37,7 @@ When added method or variable, you need to build documentation before commit.
 Update doc before commit
 ```
 yarn bazel run //tools/public_api_guard:cdk/listbox.md_api.accept
+yarn bazel run //tools/public_api_guard:material/tooltip.md_api.accept
 ```
 
 Error

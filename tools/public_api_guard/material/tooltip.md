@@ -24,6 +24,7 @@ import { InjectionToken } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { NumberInput } from '@angular/cdk/coercion';
 import { Observable } from 'rxjs';
+import { OnChanges } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { OriginConnectionPosition } from '@angular/cdk/overlay';
@@ -34,6 +35,7 @@ import { Platform } from '@angular/cdk/platform';
 import { Renderer2 } from '@angular/core';
 import { ScrollDispatcher } from '@angular/cdk/overlay';
 import { ScrollStrategy } from '@angular/cdk/overlay';
+import { SimpleChanges } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 
 // @public
@@ -59,7 +61,7 @@ export const MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER: {
 };
 
 // @public
-export class MatTooltip implements OnDestroy, AfterViewInit {
+export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
     constructor(_overlay: Overlay, _elementRef: ElementRef<HTMLElement>, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _platform: Platform, _ariaDescriber: AriaDescriber, _focusMonitor: FocusMonitor, scrollStrategy: any, _dir: Directionality, _defaultOptions: MatTooltipDefaultOptions, _document: any, _sanitizer: DomSanitizer);
     protected _addOffset(position: ConnectedPosition): ConnectedPosition;
     // (undocumented)
@@ -82,6 +84,8 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
     set message(value: string | null | undefined);
     // (undocumented)
     ngAfterViewInit(): void;
+    // (undocumented)
+    ngOnChanges(changes: SimpleChanges): void;
     ngOnDestroy(): void;
     // (undocumented)
     _overlayRef: OverlayRef | null;

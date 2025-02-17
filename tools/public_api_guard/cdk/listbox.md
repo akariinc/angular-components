@@ -12,11 +12,13 @@ import { Highlightable } from '@angular/cdk/a11y';
 import * as i0 from '@angular/core';
 import { ListKeyManagerOption } from '@angular/cdk/a11y';
 import { NgZone } from '@angular/core';
+import { OnChanges } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { QueryList } from '@angular/core';
 import { Renderer2 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
+import { SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 
 // @public (undocumented)
@@ -105,7 +107,7 @@ export class CdkListboxModule {
 }
 
 // @public
-export class CdkOption<T = unknown> implements OnInit, ListKeyManagerOption, Highlightable, OnDestroy {
+export class CdkOption<T = unknown> implements OnInit, OnChanges, ListKeyManagerOption, Highlightable, OnDestroy {
     readonly _clicked: Subject<MouseEvent>;
     deselect(): void;
     protected destroyed: Subject<void>;
@@ -125,6 +127,8 @@ export class CdkOption<T = unknown> implements OnInit, ListKeyManagerOption, Hig
     protected readonly listbox: CdkListbox<T>;
     // (undocumented)
     static ngAcceptInputType_disabled: unknown;
+    // (undocumented)
+    ngOnChanges(changes: SimpleChanges): void;
     // (undocumented)
     ngOnDestroy(): void;
     // (undocumented)
