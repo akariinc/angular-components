@@ -39,6 +39,8 @@ import {
   Output,
   QueryList,
   signal,
+  OnChanges,
+  SimpleChanges,
   Renderer2,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
@@ -99,7 +101,7 @@ class ListboxSelectionModel<T> extends SelectionModel<T> {
   },
 })
 export class CdkOption<T = unknown>
-  implements OnInit, ListKeyManagerOption, Highlightable, OnDestroy
+  implements OnInit, OnChanges, ListKeyManagerOption, Highlightable, OnDestroy
 {
   /** The id of the option's host element. */
   @Input()
@@ -160,6 +162,12 @@ export class CdkOption<T = unknown>
 
   ngOnInit() {
     this.renderer.setProperty(this.element, 'innerHTML', this.value);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('value' in changes) {
+      this.renderer.setProperty(this.element, 'innerHTML', this.value);
+    }
   }
 
   ngOnDestroy() {
