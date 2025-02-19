@@ -117,6 +117,9 @@ export class CdkOption<T = unknown>
   /** The value of this option. */
   @Input('cdkOption') value: T;
 
+  /** Display name of the option */
+  @Input('display') display: string | null = null;
+
   /**
    * The text used to locate this item during listbox typeahead. If not specified,
    * the `textContent` of the item will be used.
@@ -161,12 +164,17 @@ export class CdkOption<T = unknown>
   readonly _clicked = new Subject<MouseEvent>();
 
   ngOnInit() {
-    this.renderer.setProperty(this.element, 'innerHTML', this.value);
+    this.renderer.setProperty(this.element, 'innerHTML', this.display || this.value);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('value' in changes) {
-      this.renderer.setProperty(this.element, 'innerHTML', this.value);
+    if (('value' in changes && !this.display) || 'display' in changes) {
+      if ('display' in changes) {
+        this.renderer.setProperty(this.element, 'innerHTML', changes['display'].currentValue);
+      }
+      if ('value' in changes) {
+        this.renderer.setProperty(this.element, 'innerHTML', changes['value'].currentValue);
+      }
     }
   }
 

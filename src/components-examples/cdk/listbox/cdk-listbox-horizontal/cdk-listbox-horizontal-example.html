@@ -17,9 +17,12 @@
 <ul cdkListbox
     cdkListboxOrientation="horizontal"
     aria-labelledby="example-shirt-size-label-async"
+    [(ngModel)]="selectedValue"
     class="example-listbox">
-  @for (size$ of sizes$; track size$) {
-    <li [cdkOption]="size$ | async" class="example-option"></li>
+  @for (size of sizes; track size) {
+    <li [cdkOption]="size"
+      [display]="sizes$.get(size) | async"
+      class="example-option"></li>
   }
 </ul>
 <!-- #enddocregion listbox -->

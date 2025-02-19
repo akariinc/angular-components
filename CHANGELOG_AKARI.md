@@ -6,7 +6,7 @@
 
 | Class | Description |
 | -- | -- |
-| ListBox | Allow HTML content on cdkOption directive. Add custom sanitizer. |
+| ListBox | Allow HTML content on cdkOption directive as @Input('display'). Add custom sanitizer. |
 | ListBox | Added ngOnChanges to cdkOption directive to allow async value input |
 
 ### material
