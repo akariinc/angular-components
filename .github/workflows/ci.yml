@@ -44,6 +44,12 @@ jobs:
         run: yarn tslint
       - name: Check for circular dependencies
         run: yarn -s ts-circular-deps:check
+      - uses: actions/cache@v3 # Updated cache action version
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - uses: ./.github/actions/slack
         if: failure()
         with:
