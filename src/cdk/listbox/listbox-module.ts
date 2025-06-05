@@ -8,8 +8,6 @@
 
 import {CdkListbox, CdkOption} from './listbox';
 
-import {CdkListboxCustomSanitizer} from './listbox-custom-sanitizer';
-import {DomSanitizer} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
 const EXPORTED_DECLARATIONS = [CdkListbox, CdkOption];
