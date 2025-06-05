@@ -24,9 +24,6 @@ import {TooltipCustomSanitizer} from './tooltip-custom-sanitizer';
 @NgModule({
   imports: [A11yModule, CommonModule, OverlayModule, MatCommonModule, MatTooltip, TooltipComponent],
   exports: [MatTooltip, TooltipComponent, MatCommonModule, CdkScrollableModule],
-  providers: [
-    MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER,
-    {provide: DomSanitizer, useClass: TooltipCustomSanitizer},
-  ],
+  providers: [MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER],
 })
 export class MatTooltipModule {}

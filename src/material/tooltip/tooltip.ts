@@ -59,6 +59,7 @@ import {
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Observable, Subject} from 'rxjs';
 import {DomSanitizer} from '@angular/platform-browser';
+import {TooltipCustomSanitizer} from './tooltip-custom-sanitizer';
 
 /** Possible positions for a tooltip. */
 export type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
@@ -194,6 +195,7 @@ const MAX_WIDTH = 200;
     '[class.mat-mdc-tooltip-disabled]': 'disabled',
   },
   standalone: true,
+  providers: [{provide: DomSanitizer, useClass: TooltipCustomSanitizer}],
 })
 export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
   _overlayRef: OverlayRef | null;

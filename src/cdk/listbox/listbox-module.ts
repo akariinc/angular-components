@@ -17,6 +17,5 @@ const EXPORTED_DECLARATIONS = [CdkListbox, CdkOption];
 @NgModule({
   imports: [...EXPORTED_DECLARATIONS],
   exports: [...EXPORTED_DECLARATIONS],
-  providers: [{provide: DomSanitizer, useClass: CdkListboxCustomSanitizer}],
 })
 export class CdkListboxModule {}
