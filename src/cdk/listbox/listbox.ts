@@ -44,8 +44,10 @@ import {
   Renderer2,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {DomSanitizer} from '@angular/platform-browser';
 import {defer, fromEvent, merge, Observable, Subject} from 'rxjs';
 import {filter, map, startWith, switchMap, takeUntil} from 'rxjs/operators';
+import {CdkListboxCustomSanitizer} from './listbox-custom-sanitizer';
 
 /** The next id to use for creating unique DOM IDs. */
 let nextId = 0;
@@ -99,6 +101,7 @@ class ListboxSelectionModel<T> extends SelectionModel<T> {
     '(click)': '_clicked.next($event)',
     '(focus)': '_handleFocus()',
   },
+  providers: [{provide: DomSanitizer, useClass: CdkListboxCustomSanitizer}],
 })
 export class CdkOption<T = unknown>
   implements OnInit, OnChanges, ListKeyManagerOption, Highlightable, OnDestroy
