@@ -16,7 +16,6 @@ import { OnChanges } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { QueryList } from '@angular/core';
-import { Renderer2 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -134,7 +133,6 @@ export class CdkOption<T = unknown> implements OnInit, OnChanges, ListKeyManager
     ngOnDestroy(): void;
     // (undocumented)
     ngOnInit(): void;
-    protected readonly renderer: Renderer2;
     select(): void;
     setActiveStyles(): void;
     setInactiveStyles(): void;

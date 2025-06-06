@@ -32,9 +32,10 @@ import { Overlay } from '@angular/cdk/overlay';
 import { OverlayConnectionPosition } from '@angular/cdk/overlay';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { Platform } from '@angular/cdk/platform';
-import { Renderer2 } from '@angular/core';
+import { SafeHtml } from '@angular/platform-browser';
 import { ScrollDispatcher } from '@angular/cdk/overlay';
 import { ScrollStrategy } from '@angular/cdk/overlay';
+import { SecurityContext } from '@angular/core';
 import { SimpleChanges } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 
@@ -62,7 +63,7 @@ export const MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER: {
 
 // @public
 export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
-    constructor(_overlay: Overlay, _elementRef: ElementRef<HTMLElement>, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _platform: Platform, _ariaDescriber: AriaDescriber, _focusMonitor: FocusMonitor, scrollStrategy: any, _dir: Directionality, _defaultOptions: MatTooltipDefaultOptions, _document: any, _sanitizer: DomSanitizer);
+    constructor(_overlay: Overlay, _elementRef: ElementRef<HTMLElement>, _scrollDispatcher: ScrollDispatcher, _viewContainerRef: ViewContainerRef, _ngZone: NgZone, _platform: Platform, _ariaDescriber: AriaDescriber, _focusMonitor: FocusMonitor, scrollStrategy: any, _dir: Directionality, _defaultOptions: MatTooltipDefaultOptions, _document: any, _customSanitizer: TooltipCustomSanitizer);
     protected _addOffset(position: ConnectedPosition): ConnectedPosition;
     // (undocumented)
     protected _dir: Directionality;
@@ -154,7 +155,7 @@ export const TOOLTIP_PANEL_CLASS = "mat-mdc-tooltip-panel";
 
 // @public
 export class TooltipComponent implements OnInit, OnDestroy {
-    constructor(_changeDetectorRef: ChangeDetectorRef, _elementRef: ElementRef<HTMLElement>, _renderer: Renderer2, animationMode?: string);
+    constructor(_changeDetectorRef: ChangeDetectorRef, _elementRef: ElementRef<HTMLElement>, animationMode?: string);
     afterHidden(): Observable<void>;
     _cancelPendingAnimations(): void;
     _container: ElementRef<HTMLElement>;
@@ -185,7 +186,7 @@ export class TooltipComponent implements OnInit, OnDestroy {
     // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<TooltipComponent, "mat-tooltip-component", never, {}, {}, never, never, true, never>;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<TooltipComponent, [null, null, null, { optional: true; }]>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<TooltipComponent, [null, null, { optional: true; }]>;
 }
 
 // @public
