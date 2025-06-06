@@ -36,7 +36,6 @@ import {
   ANIMATION_MODULE_TYPE,
   afterNextRender,
   Injector,
-  SecurityContext,
 } from '@angular/core';
 import {DOCUMENT, NgClass} from '@angular/common';
 import {normalizePassiveListenerOptions, Platform} from '@angular/cdk/platform';
@@ -57,7 +56,7 @@ import {
 } from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Observable, Subject} from 'rxjs';
-import {TooltipCustomSanitizer} from './tooltip-custom-sanitizer';
+import {sanitizeHtml} from './tooltip-custom-sanitizer';
 
 /** Possible positions for a tooltip. */
 export type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
@@ -325,11 +324,7 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
     // Must convert with `String(value)`, not `${value}`, otherwise Closure Compiler optimises
     // away the string-conversion: https://github.com/angular/components/issues/20684
     // Use SecurityContext.HTML to Allow SVG
-    this._message =
-      this._customSanitizer.sanitize(
-        SecurityContext.HTML,
-        value != null ? String(value).trim() : '',
-      ) || '';
+    this._message = sanitizeHtml(value != null ? String(value).trim() : '') || '';
     // this._message = value != null ? String(value).trim() : '';
 
     if (!this._message && this._isTooltipVisible()) {
@@ -387,7 +382,6 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
     @Inject(MAT_TOOLTIP_DEFAULT_OPTIONS)
     private _defaultOptions: MatTooltipDefaultOptions,
     @Inject(DOCUMENT) _document: any,
-    private _customSanitizer: TooltipCustomSanitizer,
   ) {
     this._scrollStrategy = scrollStrategy;
     this._document = _document;

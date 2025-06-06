@@ -41,12 +41,11 @@ import {
   signal,
   OnChanges,
   SimpleChanges,
-  SecurityContext,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {defer, fromEvent, merge, Observable, Subject} from 'rxjs';
 import {filter, map, startWith, switchMap, takeUntil} from 'rxjs/operators';
-import {CdkListboxCustomSanitizer} from './listbox-custom-sanitizer';
+import {sanitizeHtml} from './listbox-custom-sanitizer';
 
 /** The next id to use for creating unique DOM IDs. */
 let nextId = 0;
@@ -121,9 +120,6 @@ export class CdkOption<T = unknown>
   /** Display name of the option */
   @Input('display') display: string | null = null;
 
-  /** Custom sanitizer */
-  private _customSanitizer = inject(CdkListboxCustomSanitizer);
-
   /**
    * The text used to locate this item during listbox typeahead. If not specified,
    * the `textContent` of the item will be used.
@@ -165,10 +161,7 @@ export class CdkOption<T = unknown>
   readonly _clicked = new Subject<MouseEvent>();
 
   ngOnInit() {
-    const htmlContent = this._customSanitizer.sanitize(
-      SecurityContext.HTML,
-      (this.display || this.value || '') as string,
-    );
+    const htmlContent = sanitizeHtml((this.display || this.value || '') as string);
     this.element.innerHTML = htmlContent || '';
   }
 
@@ -177,17 +170,11 @@ export class CdkOption<T = unknown>
     // to avoid, use custom validation sanitizer and do not use renderer.
     if (('value' in changes && !this.display) || 'display' in changes) {
       if ('display' in changes) {
-        const displayValue = this._customSanitizer.sanitize(
-          SecurityContext.HTML,
-          changes['display'].currentValue,
-        );
+        const displayValue = sanitizeHtml(changes['display'].currentValue);
         this.element.innerHTML = displayValue || '';
       }
       if ('value' in changes) {
-        const value = this._customSanitizer.sanitize(
-          SecurityContext.HTML,
-          changes['value'].currentValue,
-        );
+        const value = sanitizeHtml(changes['value'].currentValue);
         this.element.innerHTML = value || '';
       }
     }
