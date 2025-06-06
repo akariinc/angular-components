@@ -30,7 +30,6 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
-  Renderer2,
   ViewContainerRef,
   ViewEncapsulation,
   inject,
@@ -58,7 +57,6 @@ import {
 } from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Observable, Subject} from 'rxjs';
-import {DomSanitizer} from '@angular/platform-browser';
 import {TooltipCustomSanitizer} from './tooltip-custom-sanitizer';
 
 /** Possible positions for a tooltip. */
@@ -195,7 +193,6 @@ const MAX_WIDTH = 200;
     '[class.mat-mdc-tooltip-disabled]': 'disabled',
   },
   standalone: true,
-  providers: [{provide: DomSanitizer, useClass: TooltipCustomSanitizer}],
 })
 export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
   _overlayRef: OverlayRef | null;
@@ -329,8 +326,10 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
     // away the string-conversion: https://github.com/angular/components/issues/20684
     // Use SecurityContext.HTML to Allow SVG
     this._message =
-      this._sanitizer.sanitize(SecurityContext.HTML, value != null ? String(value).trim() : '') ||
-      '';
+      this._customSanitizer.sanitize(
+        SecurityContext.HTML,
+        value != null ? String(value).trim() : '',
+      ) || '';
     // this._message = value != null ? String(value).trim() : '';
 
     if (!this._message && this._isTooltipVisible()) {
@@ -388,7 +387,7 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
     @Inject(MAT_TOOLTIP_DEFAULT_OPTIONS)
     private _defaultOptions: MatTooltipDefaultOptions,
     @Inject(DOCUMENT) _document: any,
-    private _sanitizer: DomSanitizer,
+    private _customSanitizer: TooltipCustomSanitizer,
   ) {
     this._scrollStrategy = scrollStrategy;
     this._document = _document;
@@ -1027,7 +1026,6 @@ export class TooltipComponent implements OnInit, OnDestroy {
   constructor(
     private _changeDetectorRef: ChangeDetectorRef,
     protected _elementRef: ElementRef<HTMLElement>,
-    private _renderer: Renderer2,
     @Optional() @Inject(ANIMATION_MODULE_TYPE) animationMode?: string,
   ) {
     this._animationsDisabled = animationMode === 'NoopAnimations';
@@ -1076,7 +1074,11 @@ export class TooltipComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._renderer.setProperty(this._container.nativeElement, 'innerHTML', this.message);
+    // The angular sanitizer not used to validate svg content here.
+    // only customSanitizer is validating in matTooltip Directive.
+    // So using renderer will fail with validation
+    // this._renderer.setProperty(this._container.nativeElement, 'innerHTML', this.message);
+    this._container.nativeElement.innerHTML = this.message;
   }
 
   ngOnDestroy() {

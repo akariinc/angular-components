@@ -66,7 +66,10 @@ const keyMap = {
 
 /** A `TestElement` implementation for unit tests. */
 export class UnitTestElement implements TestElement {
-  constructor(readonly element: Element, private _stabilize: () => Promise<void>) {}
+  constructor(
+    readonly element: Element,
+    private _stabilize: () => Promise<void>,
+  ) {}
 
   /** Blur the element. */
   async blur(): Promise<void> {

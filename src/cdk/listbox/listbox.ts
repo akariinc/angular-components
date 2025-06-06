@@ -41,10 +41,9 @@ import {
   signal,
   OnChanges,
   SimpleChanges,
-  Renderer2,
+  SecurityContext,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {DomSanitizer} from '@angular/platform-browser';
 import {defer, fromEvent, merge, Observable, Subject} from 'rxjs';
 import {filter, map, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {CdkListboxCustomSanitizer} from './listbox-custom-sanitizer';
@@ -101,7 +100,6 @@ class ListboxSelectionModel<T> extends SelectionModel<T> {
     '(click)': '_clicked.next($event)',
     '(focus)': '_handleFocus()',
   },
-  providers: [{provide: DomSanitizer, useClass: CdkListboxCustomSanitizer}],
 })
 export class CdkOption<T = unknown>
   implements OnInit, OnChanges, ListKeyManagerOption, Highlightable, OnDestroy
@@ -122,6 +120,9 @@ export class CdkOption<T = unknown>
 
   /** Display name of the option */
   @Input('display') display: string | null = null;
+
+  /** Custom sanitizer */
+  private _customSanitizer = inject(CdkListboxCustomSanitizer);
 
   /**
    * The text used to locate this item during listbox typeahead. If not specified,
@@ -157,9 +158,6 @@ export class CdkOption<T = unknown>
   /** The parent listbox this option belongs to. */
   protected readonly listbox: CdkListbox<T> = inject(CdkListbox);
 
-  /** The renderer used to modify the listbox element. */
-  protected readonly renderer: Renderer2 = inject(Renderer2);
-
   /** Emits when the option is destroyed. */
   protected destroyed = new Subject<void>();
 
@@ -167,16 +165,30 @@ export class CdkOption<T = unknown>
   readonly _clicked = new Subject<MouseEvent>();
 
   ngOnInit() {
-    this.renderer.setProperty(this.element, 'innerHTML', this.display || this.value);
+    const htmlContent = this._customSanitizer.sanitize(
+      SecurityContext.HTML,
+      (this.display || this.value || '') as string,
+    );
+    this.element.innerHTML = htmlContent || '';
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // Here we need svg to be renderered but angular's new sanitizer will reject it.
+    // to avoid, use custom validation sanitizer and do not use renderer.
     if (('value' in changes && !this.display) || 'display' in changes) {
       if ('display' in changes) {
-        this.renderer.setProperty(this.element, 'innerHTML', changes['display'].currentValue);
+        const displayValue = this._customSanitizer.sanitize(
+          SecurityContext.HTML,
+          changes['display'].currentValue,
+        );
+        this.element.innerHTML = displayValue || '';
       }
       if ('value' in changes) {
-        this.renderer.setProperty(this.element, 'innerHTML', changes['value'].currentValue);
+        const value = this._customSanitizer.sanitize(
+          SecurityContext.HTML,
+          changes['value'].currentValue,
+        );
+        this.element.innerHTML = value || '';
       }
     }
   }

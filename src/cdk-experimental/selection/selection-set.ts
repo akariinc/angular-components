@@ -48,7 +48,10 @@ export class SelectionSet<T> implements TrackBySelection<T> {
   private _selectionMap = new Map<T | ReturnType<TrackByFunction<T>>, SelectableWithIndex<T>>();
   changed = new Subject<SelectionChange<T>>();
 
-  constructor(private _multiple = false, private _trackByFn?: TrackByFunction<T>) {}
+  constructor(
+    private _multiple = false,
+    private _trackByFn?: TrackByFunction<T>,
+  ) {}
 
   isSelected(value: SelectableWithIndex<T>): boolean {
     return this._selectionMap.has(this._getTrackedByValue(value));
