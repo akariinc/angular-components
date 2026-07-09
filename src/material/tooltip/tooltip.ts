@@ -27,8 +27,6 @@ import {
   NgZone,
   OnDestroy,
   Optional,
-  OnChanges,
-  SimpleChanges,
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
@@ -56,7 +54,7 @@ import {
 } from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Observable, Subject} from 'rxjs';
-import {sanitizeHtml} from './tooltip-custom-sanitizer';
+import {htmlToPlainText, sanitizeHtml} from './tooltip-custom-sanitizer';
 
 /** Possible positions for a tooltip. */
 export type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
@@ -193,7 +191,7 @@ const MAX_WIDTH = 200;
   },
   standalone: true,
 })
-export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
+export class MatTooltip implements OnDestroy, AfterViewInit {
   _overlayRef: OverlayRef | null;
   _tooltipInstance: TooltipComponent | null;
 
@@ -263,7 +261,7 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
         this._setupPointerEnterEventsIfNeeded();
       }
 
-      this._syncAriaDescription(this.message);
+      this._syncAriaDescription(this._ariaMessage);
     }
   }
 
@@ -318,14 +316,15 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
   }
 
   set message(value: string | null | undefined) {
-    const oldMessage = this._message;
+    const oldAriaMessage = this._ariaMessage;
 
     // If the message is not a string (e.g. number), convert it to a string and trim it.
     // Must convert with `String(value)`, not `${value}`, otherwise Closure Compiler optimises
     // away the string-conversion: https://github.com/angular/components/issues/20684
-    // Use SecurityContext.HTML to Allow SVG
-    this._message = sanitizeHtml(value != null ? String(value).trim() : '') || '';
-    // this._message = value != null ? String(value).trim() : '';
+    // The message is rendered as HTML by `TooltipComponent` (fork change to support
+    // inline SVG), so it has to be sanitized here with the SVG-preserving sanitizer.
+    this._message = sanitizeHtml(value != null ? String(value).trim() : '');
+    this._ariaMessage = htmlToPlainText(this._message);
 
     if (!this._message && this._isTooltipVisible()) {
       this.hide(0);
@@ -334,10 +333,13 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
       this._updateTooltipMessage();
     }
 
-    this._syncAriaDescription(oldMessage);
+    this._syncAriaDescription(oldAriaMessage);
   }
 
   private _message = '';
+
+  /** Plain-text version of the message, used for the ARIA description. */
+  private _ariaMessage = '';
 
   /** Classes to be passed to the tooltip. Supports the same syntax as `ngClass`. */
   @Input('matTooltipClass')
@@ -434,12 +436,6 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
       });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if ('message' in changes) {
-      this.message = changes['message'].currentValue;
-    }
-  }
-
   /**
    * Dispose the tooltip when destroyed.
    */
@@ -465,7 +461,7 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
     this._destroyed.next();
     this._destroyed.complete();
 
-    this._ariaDescriber.removeDescription(nativeElement, this.message, 'tooltip');
+    this._ariaDescriber.removeDescription(nativeElement, this._ariaMessage, 'tooltip');
     this._focusMonitor.stopMonitoring(nativeElement);
   }
 
@@ -941,8 +937,12 @@ export class MatTooltip implements OnChanges, OnDestroy, AfterViewInit {
       Promise.resolve().then(() => {
         this._ariaDescriptionPending = false;
 
-        if (this.message && !this.disabled) {
-          this._ariaDescriber.describe(this._elementRef.nativeElement, this.message, 'tooltip');
+        if (this._ariaMessage && !this.disabled) {
+          this._ariaDescriber.describe(
+            this._elementRef.nativeElement,
+            this._ariaMessage,
+            'tooltip',
+          );
         }
       });
     });
@@ -970,8 +970,17 @@ export class TooltipComponent implements OnInit, OnDestroy {
   /* Whether the tooltip text overflows to multiple lines */
   _isMultiline = false;
 
-  /** Message to display in the tooltip */
-  message: string;
+  /** Message to display in the tooltip. Already sanitized by `MatTooltip`. */
+  get message(): string {
+    return this._message;
+  }
+
+  set message(value: string) {
+    this._message = value ?? '';
+    this._updateMessageContent();
+  }
+
+  private _message = '';
 
   /** Classes to be added to the tooltip. Supports the same syntax as `ngClass`. */
   tooltipClass: string | string[] | Set<string> | {[key: string]: any};
@@ -1068,11 +1077,19 @@ export class TooltipComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // The angular sanitizer not used to validate svg content here.
-    // only customSanitizer is validating in matTooltip Directive.
-    // So using renderer will fail with validation
-    // this._renderer.setProperty(this._container.nativeElement, 'innerHTML', this.message);
-    this._container.nativeElement.innerHTML = this.message;
+    this._updateMessageContent();
+  }
+
+  /**
+   * Renders the message into the tooltip surface. The message is sanitized by
+   * `MatTooltip` with the fork's SVG-preserving sanitizer; it cannot go through
+   * an Angular binding or `Renderer2` because Angular's own sanitizer would
+   * strip the SVG content again.
+   */
+  private _updateMessageContent() {
+    if (this._container) {
+      this._container.nativeElement.innerHTML = this._message;
+    }
   }
 
   ngOnDestroy() {

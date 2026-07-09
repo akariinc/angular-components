@@ -117,7 +117,10 @@ export class CdkOption<T = unknown>
   /** The value of this option. */
   @Input('cdkOption') value: T;
 
-  /** Display name of the option */
+  /**
+   * HTML content (may include inline SVG) rendered as the option's display.
+   * Sanitized with the fork's SVG-preserving sanitizer before being rendered.
+   */
   @Input('display') display: string | null = null;
 
   /**
@@ -160,23 +163,49 @@ export class CdkOption<T = unknown>
   /** Emits when the option is clicked. */
   readonly _clicked = new Subject<MouseEvent>();
 
+  /** Whether `_renderContent` may overwrite the element's content (see below). */
+  private _canRenderValue: boolean | null = null;
+
+  /** Whether the first render (in `ngOnInit`) already happened. */
+  private _contentInitialized = false;
+
   ngOnInit() {
-    const htmlContent = sanitizeHtml((this.display || this.value || '') as string);
-    this.element.innerHTML = htmlContent || '';
+    this._contentInitialized = true;
+    this._renderContent();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Here we need svg to be renderered but angular's new sanitizer will reject it.
-    // to avoid, use custom validation sanitizer and do not use renderer.
-    if (('value' in changes && !this.display) || 'display' in changes) {
-      if ('display' in changes) {
-        const displayValue = sanitizeHtml(changes['display'].currentValue);
-        this.element.innerHTML = displayValue || '';
-      }
-      if ('value' in changes) {
-        const value = sanitizeHtml(changes['value'].currentValue);
-        this.element.innerHTML = value || '';
-      }
+    // Wait for `ngOnInit` so the projected content (if any) can be detected before
+    // the first render. `ngOnChanges` fires before `ngOnInit` for the initial values.
+    if (this._contentInitialized && ('display' in changes || 'value' in changes)) {
+      this._renderContent();
+    }
+  }
+
+  /**
+   * Renders the option's `display` HTML (or its `value` as a fallback) into the host
+   * element. The HTML cannot go through an Angular binding or `Renderer2` because
+   * Angular's own sanitizer would strip the SVG content this fork exists to allow;
+   * instead it is sanitized with the fork's SVG-preserving sanitizer.
+   */
+  private _renderContent(): void {
+    if (this.display != null) {
+      this.element.innerHTML = sanitizeHtml(String(this.display));
+      this._canRenderValue = false;
+      return;
+    }
+
+    // Rendering the value is only a fallback for options authored without content
+    // (e.g. `<li [cdkOption]="size"></li>`). Never overwrite projected content, and
+    // never render non-string values.
+    if (typeof this.value !== 'string') {
+      return;
+    }
+    if (this._canRenderValue === null) {
+      this._canRenderValue = !this.element.textContent?.trim();
+    }
+    if (this._canRenderValue) {
+      this.element.innerHTML = sanitizeHtml(this.value);
     }
   }
 
