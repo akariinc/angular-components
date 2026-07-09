@@ -1023,7 +1023,7 @@ export class TooltipComponent implements OnInit, OnDestroy {
   _tooltip!: ElementRef<HTMLElement>;
 
   /** Reference to the host element of the tooltip content container. */
-  @ViewChild('container', {static: true}) _container: ElementRef<HTMLElement>;
+  @ViewChild('container', {static: true}) _container!: ElementRef<HTMLElement>;
 
   /** Whether interactions on the page should close the tooltip */
   private _closeOnInteraction = false;
