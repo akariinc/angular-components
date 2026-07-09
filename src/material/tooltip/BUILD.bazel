@@ -65,6 +65,7 @@ ng_project(
         "index.ts",
         "public-api.ts",
         "tooltip.ts",
+        "tooltip-custom-sanitizer.ts",
         "tooltip-module.ts",
     ],
     assets = [
