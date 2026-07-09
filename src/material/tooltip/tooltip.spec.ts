@@ -1747,9 +1747,7 @@ describe('MatTooltip fork (HTML/SVG content)', () => {
       imports: [MatTooltipModule, OverlayModule, BasicTooltipDemo],
     });
 
-    inject([OverlayContainer], (oc: OverlayContainer) => {
-      overlayContainerElement = oc.getContainerElement();
-    })();
+    overlayContainerElement = TestBed.inject(OverlayContainer).getContainerElement();
 
     fixture = TestBed.createComponent(BasicTooltipDemo);
     fixture.detectChanges();
