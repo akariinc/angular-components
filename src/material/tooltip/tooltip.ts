@@ -24,6 +24,7 @@ import {
   Input,
   NgZone,
   OnDestroy,
+  OnInit,
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
@@ -54,6 +55,7 @@ import {
 import {ComponentPortal} from '@angular/cdk/portal';
 import {Observable, Subject} from 'rxjs';
 import {_animationsDisabled} from '../core';
+import {htmlToPlainText, sanitizeHtml} from './tooltip-custom-sanitizer';
 
 /** Possible positions for a tooltip. */
 export type TooltipPosition = 'left' | 'right' | 'above' | 'below' | 'before' | 'after';
@@ -286,7 +288,7 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
         this._setupPointerEnterEventsIfNeeded();
       }
 
-      this._syncAriaDescription(this.message);
+      this._syncAriaDescription(this._ariaMessage);
     }
   }
 
@@ -341,12 +343,15 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
   }
 
   set message(value: string | null | undefined) {
-    const oldMessage = this._message;
+    const oldAriaMessage = this._ariaMessage;
 
     // If the message is not a string (e.g. number), convert it to a string and trim it.
     // Must convert with `String(value)`, not `${value}`, otherwise Closure Compiler optimises
     // away the string-conversion: https://github.com/angular/components/issues/20684
-    this._message = value != null ? String(value).trim() : '';
+    // The message is rendered as HTML by `TooltipComponent` (fork change to support
+    // inline SVG), so it has to be sanitized here with the SVG-preserving sanitizer.
+    this._message = sanitizeHtml(value != null ? String(value).trim() : '');
+    this._ariaMessage = htmlToPlainText(this._message);
 
     if (!this._message && this._isTooltipVisible()) {
       this.hide(0);
@@ -355,10 +360,13 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
       this._updateTooltipMessage();
     }
 
-    this._syncAriaDescription(oldMessage);
+    this._syncAriaDescription(oldAriaMessage);
   }
 
   private _message = '';
+
+  /** Plain-text version of the message, used for the ARIA description. */
+  private _ariaMessage = '';
 
   /** Classes to be passed to the tooltip. Supports the same syntax as `ngClass`. */
   @Input('matTooltipClass')
@@ -460,7 +468,7 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
 
     this._isDestroyed = true;
 
-    this._ariaDescriber.removeDescription(nativeElement, this.message, 'tooltip');
+    this._ariaDescriber.removeDescription(nativeElement, this._ariaMessage, 'tooltip');
     this._focusMonitor.stopMonitoring(nativeElement);
   }
 
@@ -953,8 +961,12 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
           write: () => {
             this._ariaDescriptionPending = false;
 
-            if (this.message && !this.disabled) {
-              this._ariaDescriber.describe(this._elementRef.nativeElement, this.message, 'tooltip');
+            if (this._ariaMessage && !this.disabled) {
+              this._ariaDescriber.describe(
+                this._elementRef.nativeElement,
+                this._ariaMessage,
+                'tooltip',
+              );
             }
           },
         },
@@ -980,15 +992,24 @@ export class MatTooltip implements OnDestroy, AfterViewInit {
   },
   imports: [NgClass],
 })
-export class TooltipComponent implements OnDestroy {
+export class TooltipComponent implements OnInit, OnDestroy {
   private _changeDetectorRef = inject(ChangeDetectorRef);
   protected _elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
   /* Whether the tooltip text overflows to multiple lines */
   _isMultiline = false;
 
-  /** Message to display in the tooltip */
-  message: string;
+  /** Message to display in the tooltip. Already sanitized by `MatTooltip`. */
+  get message(): string {
+    return this._message;
+  }
+
+  set message(value: string) {
+    this._message = value ?? '';
+    this._updateMessageContent();
+  }
+
+  private _message = '';
 
   /** Classes to be added to the tooltip. Supports the same syntax as `ngClass`. */
   tooltipClass: string | string[] | Set<string> | {[key: string]: any};
@@ -1015,6 +1036,9 @@ export class TooltipComponent implements OnDestroy {
     static: true,
   })
   _tooltip: ElementRef<HTMLElement>;
+
+  /** Reference to the host element of the tooltip content container. */
+  @ViewChild('container', {static: true}) _container: ElementRef<HTMLElement>;
 
   /** Whether interactions on the page should close the tooltip */
   private _closeOnInteraction = false;
@@ -1075,6 +1099,22 @@ export class TooltipComponent implements OnDestroy {
   /** Whether the tooltip is being displayed. */
   isVisible(): boolean {
     return this._isVisible;
+  }
+
+  ngOnInit() {
+    this._updateMessageContent();
+  }
+
+  /**
+   * Renders the message into the tooltip surface. The message is sanitized by
+   * `MatTooltip` with the fork's SVG-preserving sanitizer; it cannot go through
+   * an Angular binding or `Renderer2` because Angular's own sanitizer would
+   * strip the SVG content again.
+   */
+  private _updateMessageContent() {
+    if (this._container) {
+      this._container.nativeElement.innerHTML = this._message;
+    }
   }
 
   ngOnDestroy() {
