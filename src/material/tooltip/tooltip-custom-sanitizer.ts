@@ -3,7 +3,7 @@
  * Copyright Google LLC All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
+ * found in the LICENSE file at https://angular.dev/license
  */
 
 /**
@@ -129,14 +129,14 @@ const sanitizeChildren = (node: Node): void => {
       const element = child as Element;
       if (!ALLOWED_ELEMENTS.has(element.nodeName.toLowerCase())) {
         // Drop disallowed elements entirely, including their subtree.
-        node.removeChild(child);
+        element.remove();
         continue;
       }
       sanitizeAttributes(element);
       sanitizeChildren(element);
     } else if (child.nodeType !== 3 /* TEXT_NODE */) {
       // Remove comments, CDATA and processing instructions — all are mXSS vectors.
-      node.removeChild(child);
+      (child as ChildNode).remove();
     }
   }
 };
