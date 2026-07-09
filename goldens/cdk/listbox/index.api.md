@@ -10,8 +10,11 @@ import { ControlValueAccessor } from '@angular/forms';
 import * as i0 from '@angular/core';
 import { Injector } from '@angular/core';
 import { NgZone } from '@angular/core';
+import { OnChanges } from '@angular/core';
 import { OnDestroy } from '@angular/core';
+import { OnInit } from '@angular/core';
 import { QueryList } from '@angular/core';
+import { SimpleChanges } from '@angular/core';
 import { Signal } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -101,12 +104,13 @@ export class CdkListboxModule {
 }
 
 // @public
-export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightable, OnDestroy {
+export class CdkOption<T = unknown> implements OnInit, OnChanges, ListKeyManagerOption, Highlightable, OnDestroy {
     readonly _clicked: Subject<MouseEvent>;
     deselect(): void;
     protected destroyed: Subject<void>;
     get disabled(): boolean;
     set disabled(value: boolean);
+    display: string | null;
     readonly element: HTMLElement;
     get enabledTabIndex(): number | null | undefined;
     set enabledTabIndex(value: number | null | undefined);
@@ -122,7 +126,11 @@ export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightab
     // (undocumented)
     static ngAcceptInputType_disabled: unknown;
     // (undocumented)
+    ngOnChanges(changes: SimpleChanges): void;
+    // (undocumented)
     ngOnDestroy(): void;
+    // (undocumented)
+    ngOnInit(): void;
     select(): void;
     setActiveStyles(): void;
     setInactiveStyles(): void;
@@ -130,7 +138,7 @@ export class CdkOption<T = unknown> implements ListKeyManagerOption, Highlightab
     typeaheadLabel: string | null;
     value: T;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkOption<any>, "[cdkOption]", ["cdkOption"], { "id": { "alias": "id"; "required": false; }; "value": { "alias": "cdkOption"; "required": false; }; "typeaheadLabel": { "alias": "cdkOptionTypeaheadLabel"; "required": false; }; "disabled": { "alias": "cdkOptionDisabled"; "required": false; }; "enabledTabIndex": { "alias": "tabindex"; "required": false; }; }, {}, never, never, true, never>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<CdkOption<any>, "[cdkOption]", ["cdkOption"], { "id": { "alias": "id"; "required": false; }; "value": { "alias": "cdkOption"; "required": false; }; "display": { "alias": "display"; "required": false; }; "typeaheadLabel": { "alias": "cdkOptionTypeaheadLabel"; "required": false; }; "disabled": { "alias": "cdkOptionDisabled"; "required": false; }; "enabledTabIndex": { "alias": "tabindex"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<CdkOption<any>, never>;
 }

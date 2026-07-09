@@ -16,16 +16,17 @@ if [ -z ${SNAPSHOT_BUILDS_GITHUB_TOKEN} ]; then
 fi
 
 # Release packages that need to published as snapshots.
+# Build only the cdk and material packages for now.
 PACKAGES=(
   cdk
-  cdk-experimental
+  # cdk-experimental
   material
-  material-experimental
-  material-moment-adapter
+  # material-experimental
+  # material-moment-adapter
   # material-luxon-adapter TODO(crisbeto): enable this once we have a builds repo
   # material-date-fns-adapter TODO(crisbeto): enable this once we have a builds repo
-  google-maps
-  youtube-player
+  # google-maps
+  # youtube-player
 )
 
 # Command line arguments.
@@ -51,7 +52,7 @@ publishPackage() {
   buildTagName="${branchName}-${commitSha}"
   buildCommitMessage="${branchName} - ${commitMessage}"
 
-  repoUrl="https://github.com/angular/${packageRepo}.git"
+  repoUrl="https://github.com/akariinc/${packageRepo}.git"
   repoDir="tmp/${packageRepo}"
 
   echo "Starting publish process of ${packageName} for ${buildVersionName} into ${branchName}.."

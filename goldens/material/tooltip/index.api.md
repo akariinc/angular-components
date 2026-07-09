@@ -18,6 +18,7 @@ import { InjectionToken } from '@angular/core';
 import { NumberInput } from '@angular/cdk/coercion';
 import { Observable } from 'rxjs';
 import { OnDestroy } from '@angular/core';
+import { OnInit } from '@angular/core';
 import { OriginConnectionPosition } from '@angular/cdk/overlay';
 import { Overlay } from '@angular/cdk/overlay';
 import { OverlayConnectionPosition } from '@angular/cdk/overlay';
@@ -137,10 +138,11 @@ export const SCROLL_THROTTLE_MS = 20;
 export const TOOLTIP_PANEL_CLASS = "mat-mdc-tooltip-panel";
 
 // @public
-export class TooltipComponent implements OnDestroy {
+export class TooltipComponent implements OnInit, OnDestroy {
     constructor(...args: unknown[]);
     afterHidden(): Observable<void>;
     _cancelPendingAnimations(): void;
+    _container: ElementRef<HTMLElement>;
     // (undocumented)
     protected _elementRef: ElementRef<HTMLElement>;
     _handleAnimationEnd({ animationName }: AnimationEvent): void;
@@ -152,10 +154,13 @@ export class TooltipComponent implements OnDestroy {
     _isMultiline: boolean;
     isVisible(): boolean;
     _markForCheck(): void;
-    message: string;
+    get message(): string;
+    set message(value: string);
     _mouseLeaveHideDelay: number;
     // (undocumented)
     ngOnDestroy(): void;
+    // (undocumented)
+    ngOnInit(): void;
     protected _onShow(): void;
     show(delay: number): void;
     _tooltip: ElementRef<HTMLElement>;
