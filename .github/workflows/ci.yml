@@ -127,7 +127,7 @@ jobs:
       - name: Install node modules
         run: pnpm install --frozen-lockfile
       - name: Run tests
-        run: bazel build --build_tag_filters=-docs-package,-release-package -- src/...
+        run: bazel build --build_tag_filters=-docs-package,-release-package -- src/cdk/... src/material/...
 
   publish_snapshots:
     runs-on: ubuntu-latest

@@ -1193,7 +1193,7 @@ describe('CdkOption display content (fork)', () => {
       <li [cdkOption]="value"></li>
     </ul>
   `,
-  standalone: false,
+  imports: [CdkListbox, CdkOption],
 })
 class ListboxWithValueRendering {
   value = 'apple';
@@ -1205,7 +1205,7 @@ class ListboxWithValueRendering {
       <li cdkOption="apple"><svg height="10" width="10"><circle r="5"/></svg> Apple</li>
     </ul>
   `,
-  standalone: false,
+  imports: [CdkListbox, CdkOption],
 })
 class ListboxWithProjectedContent {}
 
@@ -1215,7 +1215,7 @@ class ListboxWithProjectedContent {}
       <li cdkOption="apple" [display]="display"></li>
     </ul>
   `,
-  standalone: false,
+  imports: [CdkListbox, CdkOption],
 })
 class ListboxWithDisplay {
   display: string | null = null;
@@ -1227,7 +1227,7 @@ class ListboxWithDisplay {
       <li [cdkOption]="value"></li>
     </ul>
   `,
-  standalone: false,
+  imports: [CdkListbox, CdkOption],
 })
 class ListboxWithNonStringValue {
   value = {id: 1};
