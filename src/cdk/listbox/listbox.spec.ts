@@ -1123,3 +1123,103 @@ class ListboxWithObjectValues {
 
   fruitCompare = (a: {name: string}, b: {name: string}) => a.name === b.name;
 }
+describe('CdkOption display content (fork)', () => {
+  it('should render the value as content when the option is empty', () => {
+    const {optionEls} = setupComponent(ListboxWithValueRendering);
+    expect(optionEls[0].textContent?.trim()).toBe('apple');
+  });
+
+  it('should not overwrite projected content when no display is given', () => {
+    const {optionEls} = setupComponent(ListboxWithProjectedContent);
+    expect(optionEls[0].querySelector('svg')).toBeTruthy();
+    expect(optionEls[0].textContent).toContain('Apple');
+  });
+
+  it('should render sanitized display HTML including SVG', () => {
+    const {fixture, testComponent, optionEls} = setupComponent(ListboxWithDisplay);
+    testComponent.display = 'Red <svg height="10" width="10"><circle r="5"/></svg><script>window.hacked = true;</script>';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    expect(optionEls[0].querySelector('svg circle')).toBeTruthy();
+    expect(optionEls[0].querySelector('script')).toBeNull();
+    expect(optionEls[0].textContent).toContain('Red');
+    expect((window as any).hacked).toBeUndefined();
+  });
+
+  it('should prefer display over value and follow async display updates', () => {
+    const {fixture, testComponent, optionEls} = setupComponent(ListboxWithDisplay);
+    // Before the async display arrives, the string value is rendered as fallback.
+    expect(optionEls[0].textContent?.trim()).toBe('apple');
+
+    testComponent.display = '<b>Apple</b>';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    expect(optionEls[0].querySelector('b')!.textContent).toBe('Apple');
+
+    testComponent.display = '<i>Apfel</i>';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    expect(optionEls[0].querySelector('b')).toBeNull();
+    expect(optionEls[0].querySelector('i')!.textContent).toBe('Apfel');
+  });
+
+  it('should ignore non-string values when rendering fallback content', () => {
+    const {optionEls} = setupComponent(ListboxWithNonStringValue);
+    expect(optionEls[0].textContent?.trim()).toBe('');
+  });
+
+  it('should update rendered content when a string value changes', () => {
+    const {fixture, testComponent, optionEls} = setupComponent(ListboxWithValueRendering);
+    testComponent.value = 'banana';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    expect(optionEls[0].textContent?.trim()).toBe('banana');
+  });
+});
+
+@Component({
+  template: `
+    <ul cdkListbox>
+      <li [cdkOption]="value"></li>
+    </ul>
+  `,
+  standalone: false,
+})
+class ListboxWithValueRendering {
+  value = 'apple';
+}
+
+@Component({
+  template: `
+    <ul cdkListbox>
+      <li cdkOption="apple"><svg height="10" width="10"><circle r="5"/></svg> Apple</li>
+    </ul>
+  `,
+  standalone: false,
+})
+class ListboxWithProjectedContent {}
+
+@Component({
+  template: `
+    <ul cdkListbox>
+      <li cdkOption="apple" [display]="display"></li>
+    </ul>
+  `,
+  standalone: false,
+})
+class ListboxWithDisplay {
+  display: string | null = null;
+}
+
+@Component({
+  template: `
+    <ul cdkListbox>
+      <li [cdkOption]="value"></li>
+    </ul>
+  `,
+  standalone: false,
+})
+class ListboxWithNonStringValue {
+  value = {id: 1};
+}

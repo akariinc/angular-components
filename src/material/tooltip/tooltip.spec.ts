@@ -1745,3 +1745,96 @@ function finishCurrentTooltipAnimation(overlayContainer: HTMLElement, isVisible:
   });
   dispatchEvent(tooltip, event);
 }
+describe('MatTooltip fork (HTML/SVG content)', () => {
+  let overlayContainerElement: HTMLElement;
+  let fixture: ComponentFixture<BasicTooltipDemo>;
+  let tooltipDirective: MatTooltip;
+
+  beforeEach(fakeAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [MatTooltipModule, OverlayModule, BasicTooltipDemo],
+    });
+
+    inject([OverlayContainer], (oc: OverlayContainer) => {
+      overlayContainerElement = oc.getContainerElement();
+    })();
+
+    fixture = TestBed.createComponent(BasicTooltipDemo);
+    fixture.detectChanges();
+    tick();
+    tooltipDirective = fixture.debugElement
+      .query(By.css('button'))!
+      .injector.get<MatTooltip>(MatTooltip);
+  }));
+
+  function showTooltip(message: string): HTMLElement {
+    tooltipDirective.message = message;
+    tooltipDirective.show();
+    tick(0);
+    fixture.detectChanges();
+    return overlayContainerElement.querySelector('.mdc-tooltip__surface') as HTMLElement;
+  }
+
+  it('should render inline SVG content in the tooltip surface', fakeAsync(() => {
+    const surface = showTooltip(
+      'Info <svg height="20" width="20"><circle r="10" cx="10" cy="10" fill="red"/></svg>',
+    );
+
+    expect(surface).toBeTruthy();
+    expect(surface.querySelector('svg circle')).toBeTruthy();
+    expect(surface.textContent).toContain('Info');
+    flush();
+  }));
+
+  it('should keep the MDC surface classes on the content container', fakeAsync(() => {
+    const surface = showTooltip('plain message');
+
+    expect(surface.classList).toContain('mat-mdc-tooltip-surface');
+    expect(surface.classList).toContain('mdc-tooltip__surface');
+    flush();
+  }));
+
+  it('should strip scripts and event handler attributes from the message', fakeAsync(() => {
+    const surface = showTooltip(
+      'Hi <b>there</b><script>window.hacked = true;</script>' +
+        '<img src="x" onerror="window.hacked = true">' +
+        '<svg onload="window.hacked = true"><circle r="1"/></svg>',
+    );
+
+    expect(surface.querySelector('script')).toBeNull();
+    expect(surface.innerHTML).not.toContain('onerror');
+    expect(surface.innerHTML).not.toContain('onload');
+    expect(surface.querySelector('b')).toBeTruthy();
+    expect(surface.querySelector('svg circle')).toBeTruthy();
+    expect((window as any).hacked).toBeUndefined();
+    flush();
+  }));
+
+  it('should update the rendered HTML when the message changes while visible', fakeAsync(() => {
+    const surface = showTooltip('First <b>message</b>');
+    expect(surface.querySelector('b')!.textContent).toBe('message');
+
+    tooltipDirective.message = 'Second <i>message</i>';
+    fixture.detectChanges();
+
+    expect(surface.querySelector('b')).toBeNull();
+    expect(surface.querySelector('i')!.textContent).toBe('message');
+    flush();
+  }));
+
+  it('should use the plain text of the message for the ARIA description', fakeAsync(() => {
+    tooltipDirective.message =
+      'Info <b>about</b> the action <svg height="20" width="20"><circle r="10"/></svg>';
+    fixture.detectChanges();
+    tick();
+
+    const button = fixture.nativeElement.querySelector('button');
+    const describedBy = button.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+
+    const descriptionElement = document.querySelector(`#${describedBy}`)!;
+    expect(descriptionElement.textContent).toBe('Info about the action');
+    expect(descriptionElement.innerHTML).not.toContain('<b>');
+  }));
+});
+
