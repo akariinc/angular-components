@@ -7,7 +7,22 @@
     aria-labelledby="example-shirt-size-label"
     class="example-listbox">
   @for (size of sizes; track size) {
-    <li [cdkOption]="size" class="example-option">{{size}}</li>
+    <li [cdkOption]="size" class="example-option"></li>
+  }
+</ul>
+
+<label class="example-listbox-label" id="example-shirt-size-label-async">
+  Shirt Size with async data
+</label>
+<ul cdkListbox
+    cdkListboxOrientation="horizontal"
+    aria-labelledby="example-shirt-size-label-async"
+    [(ngModel)]="selectedValue"
+    class="example-listbox">
+  @for (size of sizes; track size) {
+    <li [cdkOption]="size"
+      [display]="sizes$.get(size) | async"
+      class="example-option"></li>
   }
 </ul>
 <!-- #enddocregion listbox -->

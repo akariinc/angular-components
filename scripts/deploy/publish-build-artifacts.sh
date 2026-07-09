@@ -16,17 +16,18 @@ if [ -z ${SNAPSHOT_BUILDS_GITHUB_TOKEN} ]; then
 fi
 
 # Release packages that need to published as snapshots.
+# Build only the cdk and material packages for now.
 PACKAGES=(
-  aria
+  # aria
   cdk
-  cdk-experimental
+  # cdk-experimental
   material
-  material-experimental
-  material-moment-adapter
-  material-luxon-adapter
-  material-date-fns-adapter
-  google-maps
-  youtube-player
+  # material-experimental
+  # material-moment-adapter
+  # material-luxon-adapter
+  # material-date-fns-adapter
+  # google-maps
+  # youtube-player
 )
 
 # Command line arguments.
@@ -52,7 +53,7 @@ publishPackage() {
   buildTagName="${branchName}-${commitSha}"
   buildCommitMessage="${branchName} - ${commitMessage}"
 
-  repoUrl="https://github.com/angular/${packageRepo}.git"
+  repoUrl="https://github.com/akariinc/${packageRepo}.git"
   repoDir="tmp/${packageRepo}"
 
   echo "Starting publish process of ${packageName} for ${buildVersionName} into ${branchName}.."
