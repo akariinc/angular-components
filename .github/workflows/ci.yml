@@ -108,7 +108,11 @@ jobs:
       - name: Install node modules
         run: pnpm install --frozen-lockfile
       - name: Run tests
-        run: bazel build --build_tag_filters=-docs-package,-release-package -- src/cdk/... src/material/...
+        # The standard runner has 2 cores / ~7 GB. Upstream runs this on a 16-core runner with
+        # RBE; unconstrained, Bazel fans out esbuild actions for the unit-test bundles until the
+        # JVM is OOM-killed ("Server terminated abruptly ... Socket closed") at ~99% of 12.8k
+        # actions. Cap the parallelism and the RAM Bazel thinks it has.
+        run: bazel build --jobs=2 --local_ram_resources=4096 --build_tag_filters=-docs-package,-release-package -- src/cdk/... src/material/...
 
   publish_snapshots:
     runs-on: ubuntu-latest
